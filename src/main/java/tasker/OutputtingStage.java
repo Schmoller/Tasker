@@ -16,12 +16,12 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
 
 class OutputtingStage<In,Out> extends Stage<In> implements OutputtingTask<Out> {
-	private Supplier<Function<? super In, ? extends Out>> functionSupplier;
+	private Supplier<? extends Function<? super In, ? extends Out>> functionSupplier;
 	private InstanceOptions supplierOptions;
 	
 	private Stage<Out> nextStage;
 	
-	public OutputtingStage(Task<?> task, Supplier<Function<? super In, ? extends Out>> functionSupplier, InstanceOptions options) {
+	public OutputtingStage(Task<?> task, Supplier<? extends Function<? super In, ? extends Out>> functionSupplier, InstanceOptions options) {
 		super(task);
 		this.functionSupplier = functionSupplier;
 		this.supplierOptions = options;

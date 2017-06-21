@@ -9,10 +9,10 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
 
 class ConsumingStage<In> extends Stage<In> implements ConsumingTask {
-	private final Supplier<Consumer<? super In>> consumerSupplier;
+	private final Supplier<? extends Consumer<? super In>> consumerSupplier;
 	private final InstanceOptions supplierOptions;
 	
-	public ConsumingStage(Task<?> task, Supplier<Consumer<? super In>> consumerSupplier, InstanceOptions options) {
+	public ConsumingStage(Task<?> task, Supplier<? extends Consumer<? super In>> consumerSupplier, InstanceOptions options) {
 		super(task);
 		
 		this.consumerSupplier = consumerSupplier;
@@ -33,14 +33,14 @@ class ConsumingStage<In> extends Stage<In> implements ConsumingTask {
 	private Consumer<? super In> sharedConsumerInstance;
 	
 	@Override
-	public void preExecute() {
+	protected void preExecute() {
 		if (supplierOptions == InstanceOptions.Single) {
 			sharedConsumerInstance = consumerSupplier.get();
 		}
 	}
 	
 	@Override
-	public Runnable createExecutor(Supplier<In> supplier) {
+	protected Runnable createExecutor(Supplier<In> supplier) {
 		if (supplierOptions == InstanceOptions.Single) {
 			return new StageExecutor<>(this, supplier, sharedConsumerInstance);
 		} else {
