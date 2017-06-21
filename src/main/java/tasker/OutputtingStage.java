@@ -31,11 +31,11 @@ class OutputtingStage<In,Out> extends Stage<In> implements OutputtingTask<Out> {
 		return intoConsumer(() -> consumer, InstanceOptions.Single);
 	}
 
-	public ConsumingTask intoConsumer(Supplier<Consumer<? super Out>> consumerSupplier) {
+	public ConsumingTask intoConsumer(Supplier<? extends Consumer<? super Out>> consumerSupplier) {
 		return intoConsumer(consumerSupplier, InstanceOptions.PerThread);
 	}
 
-	public ConsumingTask intoConsumer(Supplier<Consumer<? super Out>> consumerSupplier, InstanceOptions options) {
+	public ConsumingTask intoConsumer(Supplier<? extends Consumer<? super Out>> consumerSupplier, InstanceOptions options) {
 		ConsumingStage<Out> next = new ConsumingStage<>(getTask(), consumerSupplier, options);
 		nextStage = next;
 		return next;
@@ -45,11 +45,11 @@ class OutputtingStage<In,Out> extends Stage<In> implements OutputtingTask<Out> {
 		return intoFunction(() -> function, InstanceOptions.Single);
 	}
 
-	public <R> OutputtingTask<R> intoFunction(Supplier<Function<? super Out, ? extends R>> functionSupplier) {
+	public <R> OutputtingTask<R> intoFunction(Supplier<? extends Function<? super Out, ? extends R>> functionSupplier) {
 		return intoFunction(functionSupplier, InstanceOptions.PerThread);
 	}
 
-	public <R> OutputtingTask<R> intoFunction(Supplier<Function<? super Out, ? extends R>> functionSupplier, InstanceOptions options) {
+	public <R> OutputtingTask<R> intoFunction(Supplier<? extends Function<? super Out, ? extends R>> functionSupplier, InstanceOptions options) {
 		OutputtingStage<Out, R> next = new OutputtingStage<>(getTask(), functionSupplier, options);
 		nextStage = next;
 		return next;

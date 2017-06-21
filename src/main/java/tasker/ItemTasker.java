@@ -19,7 +19,7 @@ public interface ItemTasker<T> {
 	 * @param consumerSupplier A supplier for consumers 
 	 * @return Task settings object.
 	 */
-	ConsumingTask intoConsumer(Supplier<Consumer<? super T>> consumerSupplier);
+	ConsumingTask intoConsumer(Supplier<? extends Consumer<? super T>> consumerSupplier);
 	
 	/**
 	 * Consumes the results into provided consumers
@@ -27,7 +27,7 @@ public interface ItemTasker<T> {
 	 * @param options Controls when instances of the conversion function will be acquired.
 	 * @return Task settings object.
 	 */
-	ConsumingTask intoConsumer(Supplier<Consumer<? super T>> consumerSupplier, InstanceOptions options);
+	ConsumingTask intoConsumer(Supplier<? extends Consumer<? super T>> consumerSupplier, InstanceOptions options);
 	
 	/**
 	 * Converts the results from one task execution to another type using a function.
@@ -43,7 +43,7 @@ public interface ItemTasker<T> {
 	 * @param functionSupplier A supplier for functions 
 	 * @return Task settings object for the new type.
 	 */
-	<R> OutputtingTask<R> intoFunction(Supplier<Function<? super T, ? extends R>> functionSupplier);
+	<R> OutputtingTask<R> intoFunction(Supplier<? extends Function<? super T, ? extends R>> functionSupplier);
 	
 	/**
 	 * Converts the results from one task execution to another type using a function.
@@ -51,5 +51,5 @@ public interface ItemTasker<T> {
 	 * @param options Controls when instances of the conversion function will be acquired.
 	 * @return Task settings object for the new type.
 	 */
-	<R> OutputtingTask<R> intoFunction(Supplier<Function<? super T, ? extends R>> functionSupplier, InstanceOptions options);
+	<R> OutputtingTask<R> intoFunction(Supplier<? extends Function<? super T, ? extends R>> functionSupplier, InstanceOptions options);
 }

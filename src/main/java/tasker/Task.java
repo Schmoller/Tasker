@@ -38,11 +38,11 @@ class Task<In> implements ItemTasker<In> {
 		return intoConsumer(() -> consumer, InstanceOptions.Single);
 	}
 
-	public ConsumingTask intoConsumer(Supplier<Consumer<? super In>> consumerSupplier) {
+	public ConsumingTask intoConsumer(Supplier<? extends Consumer<? super In>> consumerSupplier) {
 		return intoConsumer(consumerSupplier, InstanceOptions.PerThread);
 	}
 
-	public ConsumingTask intoConsumer(Supplier<Consumer<? super In>> consumerSupplier, InstanceOptions options) {
+	public ConsumingTask intoConsumer(Supplier<? extends Consumer<? super In>> consumerSupplier, InstanceOptions options) {
 		ConsumingStage<In> next = new ConsumingStage<>(this, consumerSupplier, options);
 		firstStage = next;
 		return next;
@@ -52,11 +52,11 @@ class Task<In> implements ItemTasker<In> {
 		return intoFunction(() -> function, InstanceOptions.Single);
 	}
 
-	public <R> OutputtingTask<R> intoFunction(Supplier<Function<? super In, ? extends R>> functionSupplier) {
+	public <R> OutputtingTask<R> intoFunction(Supplier<? extends Function<? super In, ? extends R>> functionSupplier) {
 		return intoFunction(functionSupplier, InstanceOptions.PerThread);
 	}
 
-	public <R> OutputtingTask<R> intoFunction(Supplier<Function<? super In, ? extends R>> functionSupplier, InstanceOptions options) {
+	public <R> OutputtingTask<R> intoFunction(Supplier<? extends Function<? super In, ? extends R>> functionSupplier, InstanceOptions options) {
 		OutputtingStage<In, R> next = new OutputtingStage<>(this, functionSupplier, options);
 		firstStage = next;
 		return next;
