@@ -18,7 +18,7 @@ public interface OutputtingTask<T> extends ItemTasker<T> {
 	 * gives back a ListenableFuture.
 	 * @return A ListenableFuture that returns the aggregate results from all executions
 	 */
-	ListenableFuture<Collection<T>> execute();
+	ListenableFuture<? extends Collection<T>> execute();
 	
 	/**
 	 * Executes the tasks according to the applied settings and

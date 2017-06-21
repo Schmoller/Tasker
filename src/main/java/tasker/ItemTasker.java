@@ -11,7 +11,7 @@ public interface ItemTasker<T> {
 	 *                 be used by ALL threads. 
 	 * @return Task settings object.
 	 */
-	ConsumingTask intoConsumer(Consumer<T> consumer);
+	ConsumingTask intoConsumer(Consumer<? super T> consumer);
 	
 	/**
 	 * Consumes the results into provided consumers
@@ -19,7 +19,7 @@ public interface ItemTasker<T> {
 	 * @param consumerSupplier A supplier for consumers 
 	 * @return Task settings object.
 	 */
-	ConsumingTask intoConsumer(Supplier<Consumer<T>> consumerSupplier);
+	ConsumingTask intoConsumer(Supplier<Consumer<? super T>> consumerSupplier);
 	
 	/**
 	 * Consumes the results into provided consumers
@@ -27,7 +27,7 @@ public interface ItemTasker<T> {
 	 * @param options Controls when instances of the conversion function will be acquired.
 	 * @return Task settings object.
 	 */
-	ConsumingTask intoConsumer(Supplier<Consumer<T>> consumerSupplier, InstanceOptions options);
+	ConsumingTask intoConsumer(Supplier<Consumer<? super T>> consumerSupplier, InstanceOptions options);
 	
 	/**
 	 * Converts the results from one task execution to another type using a function.
