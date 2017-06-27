@@ -78,6 +78,7 @@ class Task<In> implements ItemTasker<In> {
 		public void run() {
 			try {
 				firstStage.executeStage(supplier, executorService, maxThreads);
+				executorService.shutdown();
 				set(null);
 			} catch (ExecutionException e) {
 				// Pass the real cause in, no need for the intermediary
