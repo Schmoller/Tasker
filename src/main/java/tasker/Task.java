@@ -2,8 +2,6 @@ package tasker;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -19,17 +17,12 @@ class Task<In> implements ItemTasker<In> {
 	
 	private final int maxThreads;
 	private final ListeningExecutorService executorService;
+	private final boolean shutdownOnCompletion;
 	
-	public Task(int threadCount, ThreadFactory threadFactory, Supplier<In> supplier) {
+	public Task(int threadCount, ExecutorService baseService, boolean shutdownOnCompletion, Supplier<In> supplier) {
 		this.supplier = supplier;
 		this.maxThreads = threadCount;
-		
-		ExecutorService baseService;
-		if (threadFactory == null) {
-			baseService = Executors.newCachedThreadPool();
-		} else {
-			baseService = Executors.newCachedThreadPool(threadFactory);
-		}
+		this.shutdownOnCompletion = shutdownOnCompletion;
 		
 		executorService = MoreExecutors.listeningDecorator(baseService);
 	}
@@ -78,7 +71,9 @@ class Task<In> implements ItemTasker<In> {
 		public void run() {
 			try {
 				firstStage.executeStage(supplier, executorService, maxThreads);
-				executorService.shutdown();
+				if (shutdownOnCompletion) {
+					executorService.shutdown();
+				}
 				set(null);
 			} catch (ExecutionException e) {
 				// Pass the real cause in, no need for the intermediary

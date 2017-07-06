@@ -1,6 +1,8 @@
 package tasker;
 
 import java.util.Collection;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.function.Supplier;
 
@@ -15,6 +17,7 @@ public class Tasker {
 	
 	private int threadCount = UNDEFINED;
 	private ThreadFactory threadFactory = null;
+	private ExecutorService threadService = null;
 	
 	/**
 	 * Configures the tasker to use the given number of 
@@ -41,11 +44,26 @@ public class Tasker {
 	}
 	
 	/**
+	 * Configures the tasker to use the given ExecutorService.
+	 * Note that the ExecutorService must be able to provide the number
+	 * of threads specified in {@link #usingThreads(int)} or {@link #usingThreadPerCore()},
+	 * or suffer a performance degradation 
+	 * @param service The ExecutorService to use
+	 * @return this for chaining
+	 */
+	public Tasker withService(ExecutorService service) {
+		Preconditions.checkState(threadFactory == null, "Cannot use both an ExecutorService and a ThreadFactory");
+		threadService = service;
+		return this;
+	}
+	
+	/**
 	 * Configures the tasker to use a specific thread factory
 	 * @param factory The thread factory
 	 * @return this for chaining
 	 */
 	public Tasker withThreadFactory(ThreadFactory factory) {
+		Preconditions.checkState(threadService == null, "Cannot use both an ExecutorService and a ThreadFactory");
 		threadFactory = factory;
 		return this;
 	}
@@ -75,6 +93,17 @@ public class Tasker {
 	 * @return The tasker
 	 */
 	public <T> ItemTasker<T> consume(Supplier<T> supplier) {
-		return new Task<>(threadCount, threadFactory, supplier);
+		boolean shutdownOnCompletion = false;
+		if (threadService == null) {
+			if (threadFactory == null) {
+				threadService = Executors.newCachedThreadPool();
+			} else {
+				threadService = Executors.newCachedThreadPool(threadFactory);
+			}
+			
+			shutdownOnCompletion = true;
+		}
+		
+		return new Task<>(threadCount, threadService, shutdownOnCompletion, supplier);
 	}
 }
